@@ -21,12 +21,11 @@
 </template>
 
 <script>
-
 export default {
   name: 'home',
   data () {
     return {
-       
+        music_list:this.music.music_list       
     }
   },
   methods:{

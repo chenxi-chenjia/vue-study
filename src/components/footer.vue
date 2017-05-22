@@ -2,7 +2,9 @@
 	<footer>
 		<div class="container-fluid">
 			<div class="avater-box pull-left">
-				<div class="avater"></div>
+				<div class="avater" :style='{backgroundImage:photo} '
+				@touchend.prevent='play_page_flag'
+				></div>
 			</div>
 			<div class="control">
 				<div class="slider-box">
@@ -12,11 +14,13 @@
 	                </div>
 	            </div>
 	            <div class="information-box">
-	            	<h5>我做我的王</h5>
-	            	<p>兄弟链</p>
+	            	<h5>{{name}}  </h5>
+	            	<p>{{autor}}</p>
 	            </div>
 	            <div class="operation-box">
-	            	<span class="iconfont icon-ttpodicon"></span>
+	            	<span class="iconfont" :class='btn_play_cl'
+					@touchend='btn_play=!btn_play'
+	            	></span>
 	            	<span class="iconfont icon-xiayishou"></span>
 	            	<span class="iconfont icon-bofangliebiao"></span>
 	            </div>
@@ -27,19 +31,62 @@
 
 <script>
 export default {
-  name: 'footer',
+  	name: 'footer',
+  	props:['musicNow'],
 	data() {
 		return{
-
+			music_now:this.musicNow,
+			btn_play:true
+		}
+	},
+	computed:{
+		name:function(){
+			var n=this.music_now.name;
+			return n;
+		},
+		autor:function(){
+			var a=this.music_now.autor;
+			return a;
+		},
+		photo:function(){
+			var p ="url(./static/photo/"+this.music_now.autor+"1.jpg)";
+			return p;
+		},
+		btn_play_cl:function(){
+			//播放暂停
+			if(this.btn_play){
+				return 'icon-iconfont67'
+			}else {
+				return 'icon-ttpodicon' 
+			}
+		}
+	},
+	methods:{
+		play_page_flag:function(){
+			this.$emit('showPlayPage',true);
+		}
+	},
+	mounted:function(){
+		var audio=document.querySelector('audio');
+		this.audio=audio;
+		audio.oncanplay=function(){
+			
+		}
+	},
+	updated:function(){
+		if(this.btn_play){
+			this.audio.play()
+		}else{
+			this.audio.pause();
 		}
 	}
-	
+
 
 }
 </script>
 
-<style lang='scss'>
-@keyframs{
+<style lang='scss' scoped>
+@keyframes avater{
 	0%{
 		transform: rotate(0);
 	}
@@ -55,6 +102,7 @@ footer{
 	box-shadow: 0 10px 30px rgba(0,0,0,0.7);
 	width: 100%;
 	height: 65px;
+	transition: all .5s ease-in-out;
 	.container-fluid{
 		height: 100%;
 	}
@@ -72,6 +120,9 @@ footer{
 		border-radius: 50%;
 		position: absolute;
 		top: -.1rem;
+		background-size: cover;
+		background-position: center;
+		animation: avater 20s linear infinite;
 	}
 	.control{
 		height: 100%;

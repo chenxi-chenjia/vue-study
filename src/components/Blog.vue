@@ -1,5 +1,6 @@
 <template name='blog'>
 	<div class="blog">
+		<h1></h1>
 		<Foot message='blog'></Foot>
 	</div>
 </template>
