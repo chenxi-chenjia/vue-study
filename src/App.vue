@@ -13,11 +13,16 @@
         
 
         <transition name='footer-show' >
-            <Foot :musicNow='music_now'  @showPlayPage='showPlayPage' v-if='!show_play_page'></Foot>
+            <Foot :musicNow='music_now'  
+            @showPlayPage='showPlayPage' v-if='!show_play_page'
+            :playPause='playPause' @play_pause='play_pause'
+            ></Foot>
         </transition> 
     
         <transition name='play-show'>
-            <Playpage :musicNow='music_now' @showPlayPage='showPlayPage' v-if='show_play_page' ></Playpage>
+            <Playpage :musicNow='music_now' @showPlayPage='showPlayPage' v-if='show_play_page' 
+            :playPause='playPause' @play_pause='play_pause'
+            ></Playpage>
         </transition>
                 
 
@@ -37,12 +42,25 @@ export default {
     data:function(){
         return{
             show_play_page:false,
-            music_now:this.music.music_now()
+            duration:0,
+            currentTime:0,
+            playPause:true
         }
     },
     computed:{
         src:function(){
-            return './static/music/'+this.music.music_now.src
+            return './static/music/'+this.music.music_now().src
+        },
+        music_now:function(){
+            var obj={
+                autor:this.music.music_now().autor,
+                background:this.music.music_now().background,
+                lrc:this.music.music_now().lrc,
+                name:this.music.music_now().name,
+                duration:this.duration,
+                currentTime:this.currentTime
+            }
+            return obj;
         }
     },
     components:{
@@ -53,6 +71,25 @@ export default {
     methods:{
         showPlayPage:function(flag){
             this.show_play_page=flag;
+        },
+        play_pause:function(flag){
+            this.playPause=flag;
+            if(flag){
+                this.audio.play();
+            }else{
+                this.audio.pause();
+            }
+        }
+    },
+    mounted:function(){
+        var audio=document.querySelector('audio');
+        this.audio=audio;
+        var self=this;
+        audio.oncanplay=function(){
+            self.duration=audio.duration;
+        }
+        audio.ontimeupdate = function(){
+            self.currentTime=audio.currentTime;
         }
     }
 }

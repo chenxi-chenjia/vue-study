@@ -9,17 +9,19 @@
 			<div class="control">
 				<div class="slider-box">
 	                <div class="slider-bg">
-	                    <div class="slider-been"></div>
-	                    <div class="slider-hander"></div>
+	                    <div class="slider-been"
+	                    :style='{width:width_length+"px"}'></div>
+	                    <div class="slider-hander"
+	                    :style='{transform:"translateX("+width_length+"px)"}'></div>
 	                </div>
 	            </div>
 	            <div class="information-box">
-	            	<h5>{{name}}  </h5>
+	            	<h5>{{name}}</h5>
 	            	<p>{{autor}}</p>
 	            </div>
 	            <div class="operation-box">
 	            	<span class="iconfont" :class='btn_play_cl'
-					@touchend='btn_play=!btn_play'
+					@touchend='play_pause'
 	            	></span>
 	            	<span class="iconfont icon-xiayishou"></span>
 	            	<span class="iconfont icon-bofangliebiao"></span>
@@ -32,11 +34,11 @@
 <script>
 export default {
   	name: 'footer',
-  	props:['musicNow'],
+  	props:['musicNow','playPause'],
 	data() {
 		return{
 			music_now:this.musicNow,
-			btn_play:true
+			wl:0
 		}
 	},
 	computed:{
@@ -54,31 +56,31 @@ export default {
 		},
 		btn_play_cl:function(){
 			//播放暂停
-			if(this.btn_play){
+			if(this.playPause){
 				return 'icon-iconfont67'
 			}else {
 				return 'icon-ttpodicon' 
 			}
+		},
+		width_length:function(){
+			var w=this.musicNow.currentTime/this.musicNow.duration*this.wl;
+			return w;
 		}
 	},
 	methods:{
 		play_page_flag:function(){
 			this.$emit('showPlayPage',true);
-		}
-	},
-	mounted:function(){
-		var audio=document.querySelector('audio');
-		this.audio=audio;
-		audio.oncanplay=function(){
-			
+		},
+		play_pause:function(){
+			this.$emit('play_pause',!this.playPause)
 		}
 	},
 	updated:function(){
-		if(this.btn_play){
-			this.audio.play()
-		}else{
-			this.audio.pause();
-		}
+		console.log(this.playPause)
+	},
+	mounted:function(){
+		var slide_wl=document.querySelector('.slider-box').clientWidth;
+		this.wl=slide_wl;
 	}
 
 
