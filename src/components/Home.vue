@@ -4,6 +4,9 @@
             <ul>
                 <li class="middle-group"
                 v-for='(v,i) in music_list'
+                :data-id='i'
+                :class='[i==music_now?"now":""]'
+                @touchend='chengeM'
                 >
                     <div class="avatar"
                     :style='{backgroundImage:"url(./static/photo/"+v.autor+"1.jpg)"}'
@@ -11,7 +14,8 @@
                     <h5 class="middle-inline_block"><span>{{i+1}}. </span>{{v.name}}</h5>
                     <div class="delete-box middle-group">
                          <div class="delete middle-inline_block iconfont icon-shanchu"
-                         @touchend='remove'></div>
+                         :data-id='i'
+                         @touchend.prevent.stop='remove'></div>
                     </div>
                 </li>
             </ul>
@@ -22,17 +26,30 @@
 
 <script>
 export default {
-  name: 'home',
-  data () {
-    return {
-        music_list:this.music.music_list       
+    name: 'home',
+    data () {
+        return {
+
+        }
+    },
+    computed:{
+        music_list:function(){
+            return this.$store.state.music_list;
+        },
+        music_now:function(){
+            return this.$store.state.music_num;
+        }
+    },
+    methods:{
+        remove:function(e){
+            var index=e.currentTarget.getAttribute('data-id');
+            this.$store.commit('del',index);
+        },
+        chengeM:function(e){
+            var index=e.currentTarget.getAttribute('data-id');
+            this.$store.commit('choose',index);
+        }
     }
-  },
-  methods:{
-    remove:function(){
-        
-    }
-  }
 }
 </script>
 
@@ -48,7 +65,7 @@ li{
     position: relative;
     padding-left: 65px;
     padding-right: 20px;
-
+    transition: all .25s ease-in-out;
 }
 .avatar{
     width: 40px;
@@ -68,6 +85,22 @@ li{
     height: 100%;
     padding: 0 15px;
 
+}
+.now{
+    color: #0b7cd8;
+    height: 70px;
+    line-height: 70px;
+    h5{
+        font-size: 20px;
+        font-weight: 300;
+    }
+    .avatar{
+        width: 55px;
+        height: 55px;
+    }
+    .iconfont{
+        font-size: 20px;
+    }
 }
 li+li{
     border-top: 1px solid #ddd;

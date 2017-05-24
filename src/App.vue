@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_ygwucap6wn91wcdi.css">
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_udjrwkqimeljtt9.css">
         
         <transition-group name='page-view'>
              <template v-if='!show_play_page'>
@@ -16,18 +16,24 @@
             <Foot :musicNow='music_now'  
             @showPlayPage='showPlayPage' v-if='!show_play_page'
             :playPause='playPause' @play_pause='play_pause'
+            @cut_music='cut_music'
+            :cutList='cut_list' :cutType='cut_type' @cut_type_choose='cut_type_choose'
             ></Foot>
         </transition> 
     
         <transition name='play-show'>
             <Playpage :musicNow='music_now' @showPlayPage='showPlayPage' v-if='show_play_page' 
             :playPause='playPause' @play_pause='play_pause'
+            @cut_music='cut_music'
+            @play_time='play_time'
+            :cutList='cut_list' :cutType='cut_type' @cut_type_choose='cut_type_choose'
+            :voice='voice' @voice_change='voice_change'
             ></Playpage>
         </transition>
                 
 
        
-        <audio :src='src' autoplay id= 'audio'></audio>
+        <audio :src='src' autoplay id= 'audio' ></audio>
     </div>
 </template>
 
@@ -35,7 +41,7 @@
 import Foot from '@/components/footer.vue'
 import Vheader from '@/components/header.vue'
 import Playpage from '@/components/play-page.vue'
-import Vue from 'vue'
+//切歌 next prev random cycle
 
 export default {
     name: 'app',
@@ -44,19 +50,39 @@ export default {
             show_play_page:false,
             duration:0,
             currentTime:0,
-            playPause:true
+            playPause:true,
+            cut_type:0,
+            cut_list:[
+                {
+                    name:'next',
+                    value:'icon-shunxubofang'
+                },{
+                    name:'random',
+                    value:'icon-qiatong-suijibofang'
+                },{
+                    name:'cycle',
+                    value:'icon-danquxunhuan'
+                }
+            ],
+            voice:0
         }
     },
     computed:{
+        music_list:function(){
+            return this.$store.state.music_list;
+        },
+        music_num:function(){
+            return this.$store.state.music_num;
+        },
         src:function(){
-            return './static/music/'+this.music.music_now().src
+            return './static/music/'+this.$store.state.music_list[this.$store.state.music_num].src
         },
         music_now:function(){
             var obj={
-                autor:this.music.music_now().autor,
-                background:this.music.music_now().background,
-                lrc:this.music.music_now().lrc,
-                name:this.music.music_now().name,
+                autor:this.$store.state.music_list[this.$store.state.music_num].autor,
+                background:this.$store.state.music_list[this.$store.state.music_num].background,
+                lrc:this.$store.state.music_list[this.$store.state.music_num].lrc,
+                name:this.$store.state.music_list[this.$store.state.music_num].name,
                 duration:this.duration,
                 currentTime:this.currentTime
             }
@@ -79,6 +105,30 @@ export default {
             }else{
                 this.audio.pause();
             }
+        },
+        play_time:function(e){
+            this.audio.currentTime=e;
+        },
+        cut_music:function(e){
+            if(this.cut_list[this.cut_type].name=='cycle'){
+                this.audio.currentTime=0;    
+            }else{
+                var type=e==undefined?'next':e;
+                if(this.cut_list[this.cut_type].name=='random'){
+                    type='random';
+                }
+                this.$store.commit('cut',type)
+            }
+                
+        },
+        cut_type_choose:function(e){
+            this.cut_type++;
+            if(this.cut_type>=this.cut_list.length){
+                this.cut_type=0;
+            }
+        },
+        voice_change:function(e){
+            this.audio.volume=e;
         }
     },
     mounted:function(){
@@ -87,9 +137,24 @@ export default {
         var self=this;
         audio.oncanplay=function(){
             self.duration=audio.duration;
+            self.voice=audio.volume;
         }
         audio.ontimeupdate = function(){
             self.currentTime=audio.currentTime;
+        }
+        audio.onended = function(){
+            if(self.cut_list[self.cut_type].name=='cycle'){
+                self.audio.currentTime=0;    
+            }else{
+                var type='next';
+                if(self.cut_list[self.cut_type].name=='random'){
+                    type='random';
+                }
+                self.$store.commit('cut',type)
+            }
+        }
+        audio.onvolumechange = function(){
+            self.voice=audio.volume;
         }
     }
 }

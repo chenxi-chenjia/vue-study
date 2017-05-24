@@ -23,8 +23,12 @@
 	            	<span class="iconfont" :class='btn_play_cl'
 					@touchend='play_pause'
 	            	></span>
-	            	<span class="iconfont icon-xiayishou"></span>
-	            	<span class="iconfont icon-bofangliebiao"></span>
+	            	<span class="iconfont icon-xiayishou"
+	            	@touchend='cut_music'></span>
+	            	<span class="iconfont cut-type"
+	            	:class='[cutList[cutType].value]'
+	            	@touchend='cut_type_choose'
+	            	></span>
 	            </div>
 			</div>
 		</div>
@@ -34,24 +38,23 @@
 <script>
 export default {
   	name: 'footer',
-  	props:['musicNow','playPause'],
+  	props:['musicNow','playPause','cutList','cutType'],
 	data() {
 		return{
-			music_now:this.musicNow,
 			wl:0
 		}
 	},
 	computed:{
 		name:function(){
-			var n=this.music_now.name;
+			var n=this.musicNow.name;
 			return n;
 		},
 		autor:function(){
-			var a=this.music_now.autor;
+			var a=this.musicNow.autor;
 			return a;
 		},
 		photo:function(){
-			var p ="url(./static/photo/"+this.music_now.autor+"1.jpg)";
+			var p ="url(./static/photo/"+this.musicNow.autor+"1.jpg)";
 			return p;
 		},
 		btn_play_cl:function(){
@@ -73,10 +76,16 @@ export default {
 		},
 		play_pause:function(){
 			this.$emit('play_pause',!this.playPause)
+		},
+		cut_music:function(){
+			this.$emit('cut_music','next')
+		},
+		cut_type_choose:function(){
+			this.$emit('cut_type_choose')
 		}
 	},
 	updated:function(){
-		console.log(this.playPause)
+		
 	},
 	mounted:function(){
 		var slide_wl=document.querySelector('.slider-box').clientWidth;
@@ -143,7 +152,7 @@ footer{
 		position: relative;
 	}
 	.slider-been{
-		width: 10px;
+		width: 0;
 		height: 100%;
 		position: absolute;
 		left: 0;
@@ -191,7 +200,10 @@ footer{
 			font-size: 24px;
 		}
 	}
-
+	.cut-type{
+		display: inline-block;
+		width: 23px;
+	}
 }
 
 </style>

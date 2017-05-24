@@ -6,9 +6,9 @@
 				<template v-for='item in list_nav' >
 					<nav class="col-6" 
 					:class='[item.name==this_location?"show":""]'
-					><h5><span
+					><h5><router-link :to='item.to'><span
 					@touchend='this_location=item.name'
-					>{{item.value}} <i></i> </span></h5></nav>
+					>{{item.value}} <i></i> </span></router-link></h5></nav>
 				</template>
 			</div>
 		</div>
@@ -27,9 +27,9 @@ export default {
 					value:'音乐列表',
 					to:'/'
 				},{
-					name:'search',
-					value:'搜索歌曲',
-					to:'/search'
+					name:'news',
+					value:'知乎',
+					to:'/news'
 				}
 			],
 			this_location:'list'
@@ -47,6 +47,7 @@ export default {
 		top: 0;
 		left: 0;
 		width: 100%;
+		z-index: 1;
 	}
 	.row{
 		margin: 0 -15px;
@@ -59,7 +60,7 @@ export default {
 	}
 	span{
 		position: relative;
-
+		color: #fff;
 	}
 	i{
 		content: '';
