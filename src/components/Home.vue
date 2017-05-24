@@ -58,7 +58,7 @@ export default {
 .home{
   height: 100%;
   padding-bottom: 100px;
-  padding-top: 100px;
+  padding-top: 50px;
 }
 li{
     height: 50px;

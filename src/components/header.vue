@@ -2,15 +2,6 @@
 	<header>
 		<div class="container-fluid">
 			<h5>我的音乐</h5>
-			<div class="row">
-				<template v-for='item in list_nav' >
-					<nav class="col-6" 
-					:class='[item.name==this_location?"show":""]'
-					><h5><router-link :to='item.to'><span
-					@touchend='this_location=item.name'
-					>{{item.value}} <i></i> </span></router-link></h5></nav>
-				</template>
-			</div>
 		</div>
 	</header>
 </template>
@@ -21,17 +12,6 @@ export default {
 	name:'head',
 	data(){
 		return{
-			list_nav:[
-				{
-					name:'list',
-					value:'音乐列表',
-					to:'/'
-				},{
-					name:'news',
-					value:'知乎',
-					to:'/news'
-				}
-			],
 			this_location:'list'
 		}
 	}

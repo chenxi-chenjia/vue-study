@@ -5,8 +5,11 @@ import Vuex from 'vuex'
 import App from './App'
 import router from './router'
 import {music} from '@/assets/music_list.js'
+
 Vue.config.productionTip = false;
 Vue.use(Vuex);
+
+
 const store = new Vuex.Store({
 	state:{
 		music_list:music,

@@ -145,6 +145,7 @@ export default {
         audio.onended = function(){
             if(self.cut_list[self.cut_type].name=='cycle'){
                 self.audio.currentTime=0;    
+                audio.play();
             }else{
                 var type='next';
                 if(self.cut_list[self.cut_type].name=='random'){
